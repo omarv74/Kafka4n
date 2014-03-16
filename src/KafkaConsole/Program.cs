@@ -12,7 +12,7 @@ namespace KafkaConsole
 {
     class Program
     {
-
+        const string KAFKA_BROKER = "192.168.5.175";
         static void DumpMessage(KafkaMessage message)
         {
             Console.WriteLine(message);
@@ -20,12 +20,13 @@ namespace KafkaConsole
 
         static void Main(string[] args)
         {
-            string topicName = "kafkatopic";
+            //string topicName = "kafkatopic";
+            string topicName = "LocalTest";
             int partitionId = 0;
             int correlationId = 0;
 
 
-            KafkaBusConnector busConnector = new KafkaBusConnector("192.168.0.105", 9092, "KafkaConsole");
+            KafkaBusConnector busConnector = new KafkaBusConnector(KAFKA_BROKER, 9092, "CSharpConsole");
 
             IKafkaMessageConsumer consumer = new MessageConsumer();
             consumer.Start(busConnector, topicName, partitionId, 4, DumpMessage);
@@ -36,7 +37,7 @@ namespace KafkaConsole
             }
             consumer.Stop();
 
-            //short errorCode = busConnector.Produce(topicName, -1, "Hello");
+            short errorCode = busConnector.Produce(topicName, 0, "Hello from C#");
 
             var stream = busConnector.CreateMessageStream(topicName, partitionId, KafkaMessageStream.StreamStart.Beginning);
             foreach (var kafkaMessage in stream)
@@ -61,7 +62,7 @@ namespace KafkaConsole
 
 
 
-            Connector connector = new Connector("192.168.0.105", 9092);
+            Connector connector = new Connector(KAFKA_BROKER, 9092);
             int max = 4;
 
             
